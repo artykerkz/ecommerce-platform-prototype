@@ -1,0 +1,32 @@
+package ecommerce;
+
+import java.util.List;
+import java.util.function.Function;
+
+public class Order {
+    private List<Product> products;
+    private double subtotal;
+    private double tax;
+    private double shippingFee;
+    private double finalTotal;
+
+    public Order(List<Product> products) {
+        this.products = products;
+        calculateTotals();
+    }
+
+    private void calculateTotals() {
+        subtotal = products.stream().mapToDouble(Product::getPrice).sum();
+
+        Function<Double, Double> taxCalc = amount -> amount * 0.08;
+        Function<Double, Double> shippingCalc = amount -> amount > 100 ? 0.0 : 5.99;
+
+        tax = taxCalc.apply(subtotal);
+        shippingFee = shippingCalc.apply(subtotal);
+        finalTotal = subtotal + tax + shippingFee;
+    }
+
+    public double getFinalTotal() {
+        return finalTotal;
+    }
+}
